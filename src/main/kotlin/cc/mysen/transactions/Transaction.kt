@@ -2,15 +2,13 @@ package cc.mysen.transactions
 
 data class Transaction(
     val date: String,
-    val description: String,
+    val type: String,
+    val payee: String,
     val amount: Float
 ) {
-
-    companion object Invalid {
+    companion object {
         fun invalid(): Transaction {
-            return Transaction("", "", 0F)
+            return Transaction("", "", "", 0F)
         }
     }
-
-
 }
