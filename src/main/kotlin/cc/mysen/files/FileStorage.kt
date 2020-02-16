@@ -12,7 +12,7 @@ interface FileStorage {
 
     fun createFileName(): String {
         val clock: Clock = Clock.systemUTC()
-        return ZonedDateTime.ofInstant(clock.instant(), ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))
+        return "${ZonedDateTime.ofInstant(clock.instant(), ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss"))}.transactions"
     }
 }
