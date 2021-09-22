@@ -3,6 +3,7 @@ package cc.mysen
 import cc.mysen.files.FileEventStream
 import cc.mysen.files.FileStorage
 import cc.mysen.files.LocalFileStorage
+import cc.mysen.properties.ApplicationProperties
 import cc.mysen.transactions.TransactionReader
 import cc.mysen.ynab.ApiClient
 import org.koin.dsl.module
@@ -10,7 +11,9 @@ import java.io.File
 
 val myModule = module {
 
-  single { ApiClient("secret") }
+  single { ApplicationProperties("application.properties") }
+
+  single { ApiClient(get()) }
 
   single { Api(get()) }
 

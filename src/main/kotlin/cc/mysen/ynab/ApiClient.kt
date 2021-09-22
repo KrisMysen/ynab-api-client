@@ -1,5 +1,9 @@
 package cc.mysen.ynab
 
-class ApiClient (val secret: String) {
+import cc.mysen.properties.ApplicationProperties
+
+class ApiClient (val applicationProperties: ApplicationProperties) {
+
+
 
 }
