@@ -3,6 +3,7 @@ package cc.mysen
 import cc.mysen.commandline.Input
 import cc.mysen.commandline.Output
 import cc.mysen.files.InputFolders
+import kotlin.system.exitProcess
 
 class CommandLine(
         private val input: Input,
@@ -17,15 +18,16 @@ class CommandLine(
         actions.add(ProcessAction(output))
         actions.add(ExitAction(output))
 
-        actions.write()
+        actions.printActions()
     }
 
     interface Action {
 
-        fun print()
+        fun print(index: Int)
 
-        fun run()
+        fun execute(onDone: () -> Unit)
     }
+
 
     private class Actions(private val output: Output, private val input: Input) {
 
@@ -36,22 +38,20 @@ class CommandLine(
             return this
         }
 
-        fun write() {
+        fun printActions() {
             output.newLine()
             output.write("What do you want to do?")
 
-            actions.forEach { it.print() }
+            actions.forEachIndexed { index, action ->  action.print(index) }
 
             input.read { onInputReceived(it)}
         }
 
         fun onInputReceived(text: String) {
-            when (text) {
-                "1" -> output.write("Good choice. Processing....")
-                "2" -> output.write("Too bad, exiting")
-            }
-
-            input.read { onInputReceived(it)}
+            actions[text.toInt()]
+                .execute {
+                    printActions()
+                }
         }
 
     }
@@ -61,40 +61,47 @@ class CommandLine(
         private val inputFolders: InputFolders
         ) : Action {
 
-        override fun print() {
-            output.write("Status")
+        override fun print(index: Int) {
+            output.write("${index}. Status")
         }
 
-        override fun run() {
+        override fun execute(onDone: () -> Unit) {
             output.write("Starting detection of input files...")
             val inputFolders = inputFolders.get()
 
             if (inputFolders.isNotEmpty()) {
                 output.write("Detected ${inputFolders.size} folders")
+
                 inputFolders.forEach {
                     output.write("\t-${it.name} (${it.getFiles().size} files)")
                 }
             }
+            output.write("Done")
+            onDone()
         }
     }
 
     private class ProcessAction(private val output: Output): Action {
-        override fun print() {
-            output.write("Process transactions")
+
+        override fun print(index: Int) {
+            output.write("${index}. Process transactions")
         }
 
-        override fun run() {
-            TODO("Not yet implemented")
+        override fun execute(onDone: () -> Unit) {
+            output.write("Processing transactions...")
+            output.write("Done")
+            onDone()
         }
     }
 
     private class ExitAction(private val output: Output): Action {
-        override fun print() {
-            output.write("Exit")
+
+        override fun print(index: Int) {
+            output.write("${index}. Exit")
         }
 
-        override fun run() {
-            TODO("Not yet implemented")
+        override fun execute(onDone: () -> Unit) {
+            exitProcess(0)
         }
     }
 
